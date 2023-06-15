@@ -12,8 +12,37 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Solution {
+  id        Int     @id @default(autoincrement())
+  content   String
+  userId    String
+  problemId Int
+  problem   Problem @relation(fields: [problemId], references: [id])
+  
+  @@index([problemId], name: "problemIdIndex")
+}
+
+model Problem {
+  id        Int          @id @default(autoincrement())
+  title     String
+  content   String
+  tags      TagOnProblem[]
+  solutions Solution[]
+}
+
+model Tag {
+  id        Int            @id @default(autoincrement())
+  name      String         @unique
+  problems  TagOnProblem[]
+}
+
+model TagOnProblem {
+  tagId     Int
+  problemId Int
+  problem   Problem @relation(fields: [problemId], references: [id])
+  tag       Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([tagId, problemId])
+  @@index([tagId], name: "tagIdIndex")
+  @@index([problemId], name: "problemIdIndex")
 }
