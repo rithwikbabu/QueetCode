@@ -57,23 +57,93 @@ const Home: NextPage = () => {
           background: `conic-gradient(from ${bgDegree}deg at 7.5% ${NAVBAR_HEIGHT}, #ffb56b, #f3915e, #d5424b, #ae2474, #7a0f86, #350368, #211b29)`,
         }}
       >
-        <div id="spacer" className="h-16" />
-        <div id="container" className="h-screen w-full">
-          <div className="mx-auto h-full w-full grow bg-white md:max-w-[888px]">
-            <SignedIn>
-              <SignOutButton>
-                <button className="btn">Sign out</button>
-              </SignOutButton>
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <button className="btn">Sign in</button>
-              </SignInButton>
-            </SignedOut>
-            <div className="rounded-sm bg-[#e3e0cd]">
-              {data?.map((problem) => (
-                <div key={problem.id}>{problem.title}</div>
-              ))}
+        <div id="content-wrapper" className="mt-12 h-[calc(100vh-48px)] w-full">
+          <div
+            id="content"
+            className="mx-auto grid h-full w-full grow grid-cols-4 gap-4 p-4 pb-0 md:max-w-6xl md:grid-cols-3 md:p-6 md:pb-0 lg:max-w-6xl lg:grid-cols-4 lg:gap-6"
+          >
+            <div
+              id="right-container"
+              className="grid h-full grid-rows-3 gap-4 md:col-span-2 lg:col-span-3"
+            >
+              <div className="b grid grid-cols-3 gap-4 rounded-sm border-b-[3px] border-neutral-700 pb-4 pt-0.5">
+                <div className="rounded-lg bg-neutral-800"></div>
+                <div className="rounded-lg bg-neutral-800"></div>
+                <div className="rounded-lg bg-neutral-800"></div>
+              </div>
+              {/* <SignedIn>
+                <SignOutButton>
+                  <button className="btn">Sign out</button>
+                </SignOutButton>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="btn">Sign in</button>
+                </SignInButton>
+              </SignedOut> */}
+
+              <div className="row-span-2 rounded-t-lg bg-neutral-800 px-8">
+                <div role="rowgroup">
+                  {data?.map((problem) => (
+                    <div
+                      role="row"
+                      key={problem.id}
+                      className="flex flex-auto text-[14px] text-white even:bg-neutral-700"
+                    >
+                      <div
+                        role="cell"
+                        className="mx-2.5 box-border flex w-12 min-w-0 items-center py-[11px] "
+                      ></div>
+                      <div
+                        role="cell"
+                        className="mx-2.5 box-border flex w-64 min-w-0 items-center py-[11px] "
+                      >
+                        <div className="flex max-w-[302px] items-center overflow-hidden">
+                          <div className="overflow-hidden">
+                            <div className="flex items-center">
+                              <div className="truncate">
+                                <a
+                                  href=""
+                                  className="hover:text-blue-s dark:hover:text-dark-blue-s h-5"
+                                >
+                                  {problem.id - 1}. {problem.title}
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        role="cell"
+                        className="mx-2.5 box-border flex w-20 min-w-0 items-center py-[11px]"
+                      >
+                        <span
+                          className={
+                            problem.difficulty === "Easy"
+                              ? "text-easy"
+                              : problem.difficulty === "Medium"
+                              ? "text-medium"
+                              : "text-hard"
+                          }
+                        >
+                          {problem.difficulty}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div id="left-container" className="col-span-4 md:col-span-1">
+              <div className="pt-0.5 md:top-3">
+                <div className="lc-xl:mt-[39px] relative mt-[39px] flex flex-col rounded-lg bg-neutral-800 py-2 pb-[2px] md:mt-0">
+                  <div className="g h-96"></div>
+                </div>
+                <div className="mt-4 hidden space-y-4 md:block"></div>
+                <div className="lc-xl:mt-[39px] relative mt-[39px] flex flex-col rounded-lg bg-neutral-800 py-2 pb-[2px] md:mt-0">
+                  <div className="g h-64"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

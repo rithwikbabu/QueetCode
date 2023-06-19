@@ -6,7 +6,7 @@ import { NAVBAR_HEIGHT } from '~/constants/styles';
 
 const Navbar: React.FC = () => {
     return (
-        <nav className={`absolute h-16`}>
+        <nav className={`absolute h-12`}>
             <Link href="/">
                 Home
             </Link>

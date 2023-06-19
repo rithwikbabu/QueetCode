@@ -23,11 +23,12 @@ model Solution {
 }
 
 model Problem {
-  id        Int          @id @default(autoincrement())
-  title     String
-  content   String
-  tags      TagOnProblem[]
-  solutions Solution[]
+  id           Int          @id @default(autoincrement())
+  title        String
+  content      String
+  difficulty   String
+  tags         TagOnProblem[]
+  solutions    Solution[]
 }
 
 model Tag {
