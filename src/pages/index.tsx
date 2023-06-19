@@ -84,10 +84,28 @@ const Home: NextPage = () => {
 
               <div className="row-span-2 rounded-t-lg bg-neutral-800 px-8 shadow-dark-1">
                 <div role="rowgroup">
-                  <div role="row" className="flex flex-auto text-[14px] text-neutral-400 border-b border-neutral-700">
-                    <div role="columnheader" className="mx-2.5 box-border flex w-12 min-w-0 items-start py-[11px]">Status</div>
-                    <div role="columnheader" className="flex mx-2.5 box-border w-80 min-w-0 items-start py-[11px]">Title</div>
-                    <div role="columnheader" className="mx-2.5 box-border flex w-20 min-w-0 items-start py-[11px]">Difficulty</div>
+                  <div
+                    role="row"
+                    className="flex flex-auto border-b border-neutral-700 text-[14px] text-neutral-400"
+                  >
+                    <div
+                      role="columnheader"
+                      className="mx-2.5 box-border flex w-12 min-w-0 items-start py-[11px]"
+                    >
+                      Status
+                    </div>
+                    <div
+                      role="columnheader"
+                      className="mx-2.5 box-border flex w-80 min-w-0 items-start py-[11px]"
+                    >
+                      Title
+                    </div>
+                    <div
+                      role="columnheader"
+                      className="mx-2.5 box-border flex w-20 min-w-0 items-start py-[11px]"
+                    >
+                      Difficulty
+                    </div>
                   </div>
                   {data?.map((problem) => (
                     <div
@@ -101,15 +119,19 @@ const Home: NextPage = () => {
                       ></div>
                       <div
                         role="cell"
-                        className="flex mx-2.5 box-border w-80 min-w-0 items-center py-[11px] "
+                        className="mx-2.5 box-border flex w-80 min-w-0 items-center py-[11px] "
                       >
                         <div className="flex max-w-[320px] items-center overflow-hidden">
                           <div className="overflow-hidden">
                             <div className="flex items-center">
                               <div className="truncate">
-                                <a href="" className="h-5 hover:text-blue-500">
+                                <Link
+                                  href="problems/[url]"
+                                  as={`/problems/${problem.url}`}
+                                  className="h-5 hover:text-blue-500"
+                                >
                                   {problem.id - 1}. {problem.title}
-                                </a>
+                                </Link>
                               </div>
                             </div>
                           </div>
