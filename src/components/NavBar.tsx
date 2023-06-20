@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
           </Link>
           <Link
             href="/problems"
-            className={`ml-8 h-full leading-[3rem] tracking-wide text-neutral-400 transition-colors duration-300 ease-in-out hover:text-neutral-100 ${
+            className={`ml-8 h-full leading-[3rem] text-neutral-400 transition-colors duration-300 ease-in-out hover:text-neutral-100 ${
               router.pathname === "/problems" ? "border-b-2" : ""
             }`}
           >
@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
           </Link>
           <Link
             href="/discuss"
-            className={`ml-8 h-full leading-[3rem] tracking-wide text-neutral-400 transition-colors duration-300 ease-in-out hover:text-neutral-100 ${
+            className={`ml-8 h-full leading-[3rem] text-neutral-400 transition-colors duration-300 ease-in-out hover:text-neutral-100 ${
               router.pathname === "/discuss" ? "border-b-2" : ""
             }`}
           >

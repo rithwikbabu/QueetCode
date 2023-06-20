@@ -30,6 +30,7 @@ model Problem {
   difficulty String
   tags       TagOnProblem[]
   solutions  Solution[]
+  likes      Like[]
 }
 
 model Tag {
@@ -46,5 +47,16 @@ model TagOnProblem {
 
   @@id([tagId, problemId])
   @@index([tagId], name: "tagIdIndex")
+  @@index([problemId], name: "problemIdIndex")
+}
+
+model Like {
+  id        Int     @id @default(autoincrement())
+  clerkId   String
+  problemId Int
+  value     Int     @default(0) // 1 for like, -1 for dislike
+  problem   Problem @relation(fields: [problemId], references: [id])
+
+  @@index([clerkId], name: "clerkIdIndex")
   @@index([problemId], name: "problemIdIndex")
 }
