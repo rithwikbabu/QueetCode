@@ -9,7 +9,6 @@ const Markdown: React.FC<MarkdownProps> = ({ md }) => {
   return (
     <div className="flex w-full flex-col text-sm text-white">
       <ReactMarkdown
-        children={md}
         remarkPlugins={[remarkGfm]}
         components={{
           code: ({ inline, children, ...props }) => {
@@ -18,9 +17,10 @@ const Markdown: React.FC<MarkdownProps> = ({ md }) => {
                 <code
                   className="rounded-[5px] border border-[#f7faff1f]
                             bg-[#ffffff12] p-[.125rem] text-xs leading-4 text-[#eff1f6bf]"
-                  children={children}
                   {...props}
-                />
+                >
+                  {children}
+                </code>
               );
             }
             // The code block inside a pre tag will just render the children
@@ -36,7 +36,9 @@ const Markdown: React.FC<MarkdownProps> = ({ md }) => {
             />
           ),
         }}
-      />
+      >
+        {md}
+      </ReactMarkdown>
     </div>
   );
 };
