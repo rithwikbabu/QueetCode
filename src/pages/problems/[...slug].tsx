@@ -1,8 +1,9 @@
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Background from "~/components/Background";
+import Markdown from "~/components/Markdown";
+import { useLikesHandler } from "~/components/useLikesHandler";
 import { api } from "~/utils/api";
 
 export default function Page() {
@@ -58,48 +59,20 @@ export default function Page() {
     };
   }, [dragging]);
 
-  const user = useUser();
-  const mutation = api.likes.handleLikes.useMutation();
+  const { likesTrigger, handleLikes, updateLikes, votes, totalLikeQuery } =
+    useLikesHandler(data);
 
-  const [tempLikes, setTempLikes] = useState<number>(0);
-  const [tempDislikes, setTempDislikes] = useState<number>(0);
+  useEffect(() => {
+    (async () => {
+      await updateLikes();
+    })();
+  }, [likesTrigger, totalLikeQuery]);
 
-  const userLike = api.likes.getLikesByUser.useQuery({
-    clerkId: user?.user?.id || "0",
-    problemId: data?.id || 0,
-  });
+  if (isLoading || totalLikeQuery.isLoading) return <div>Loading...</div>;
 
-  // if (userLike.data?.value === 1) {
-  //   setTempLikes(1);
-  // } else {
-  //   setTempDislikes(1);
-  // }
+  const markdown = data?.content?.replace(/\\n/g, "\n").replace(/\\`/g, "\`");
 
-  const handleLikes = (likeValue: number) => {
-    if (user && user.user && user.user.id && data && data.id) {
-      mutation.mutate({
-        clerkId: user.user.id,
-        problemId: data.id,
-        value: likeValue,
-      });
-
-      if (likeValue === 1) {
-        setTempLikes(1);
-        setTempDislikes(0);
-      } else {
-        setTempLikes(0);
-        setTempDislikes(1);
-      }
-    } else {
-      return;
-    }
-  };
-
-  const likeDataQuery = api.likes.getTotalLikesAndDislikes.useQuery({
-    problemId: data?.id || 0, // if data?.id is undefined, we fallback to 0
-  });
-
-  if (isLoading || likeDataQuery.isLoading) return <div>Loading...</div>;
+  console.log(markdown)
 
   return (
     <Background>
@@ -210,7 +183,13 @@ export default function Page() {
                           className=" flex cursor-pointer items-center space-x-1 rounded px-1 py-[3px] text-neutral-400 hover:bg-neutral-700"
                           onClick={() => handleLikes(1)}
                         >
-                          <div className="text-lg text-neutral-400">
+                          <div
+                            className={`text-lg ${
+                              votes.userLike === "like"
+                                ? "text-easy"
+                                : "text-neutral-400"
+                            }`}
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 24 24"
@@ -225,17 +204,19 @@ export default function Page() {
                               ></path>
                             </svg>
                           </div>
-                          <div className="text-xs">
-                            {likeDataQuery.data?.likes
-                              ? likeDataQuery.data?.likes
-                              : 0 + tempLikes}
-                          </div>
+                          <div className="text-xs">{votes.likes}</div>
                         </div>
                         <div
                           className=" flex cursor-pointer items-center space-x-1 rounded px-1 py-[3px] text-neutral-400 hover:bg-neutral-700"
                           onClick={() => handleLikes(-1)}
                         >
-                          <div className="text-lg text-neutral-400">
+                          <div
+                            className={`text-lg ${
+                              votes.userLike === "dislike"
+                                ? "text-hard"
+                                : "text-neutral-400"
+                            }`}
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 24 24"
@@ -250,11 +231,7 @@ export default function Page() {
                               ></path>
                             </svg>
                           </div>
-                          <div className="text-xs">
-                            {likeDataQuery.data?.dislikes
-                              ? likeDataQuery.data?.dislikes
-                              : 0 + tempDislikes}
-                          </div>
+                          <div className="text-xs">{votes.dislikes}</div>
                         </div>
                       </div>
 
@@ -318,6 +295,9 @@ export default function Page() {
                       </div>
                     </div>
                   </div>
+                </div>
+                <div className="px-5 pt-4">
+                  <Markdown md={markdown || ""} />
                 </div>
               </div>
             </div>

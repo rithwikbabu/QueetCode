@@ -97,7 +97,7 @@ const Home: NextPage = () => {
                                   as={`/problems/${problem.url}`}
                                   className="h-5 hover:text-blue-500"
                                 >
-                                  {problem.id - 1}. {problem.title}
+                                  {problem.id}. {problem.title}
                                 </Link>
                               </div>
                             </div>

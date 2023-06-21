@@ -1,5 +1,14 @@
+import { TRPCError } from "@trpc/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "10 s"),
+  analytics: true,
+});
 
 export const likesRouter = createTRPCRouter({
   handleLikes: publicProcedure
@@ -11,6 +20,13 @@ export const likesRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+
+      const { success } = await ratelimit.limit(input.clerkId);
+
+      if (!success) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS"});
+      }
+
       const existingLike = await ctx.prisma.like.findFirst({
         where: {
           clerkId: input.clerkId,
@@ -68,12 +84,12 @@ export const likesRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const result = await ctx.prisma.like.findFirst({
+      const userLike = await ctx.prisma.like.findFirst({
         where: {
           clerkId: input.clerkId,
           problemId: input.problemId,
         },
       });
-      return result;
+      return userLike;
     }),
 });
