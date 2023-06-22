@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { NAVBAR_HEIGHT } from "~/constants/styles";
 import {
   SignInButton,
   SignUpButton,

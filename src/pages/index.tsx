@@ -1,15 +1,7 @@
-import {
-  SignInButton,
-  SignOutButton,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import Background from "~/components/Background";
-import { NAVBAR_HEIGHT } from "~/constants/styles";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
@@ -138,7 +130,7 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        </Background>
+      </Background>
     </>
   );
 };

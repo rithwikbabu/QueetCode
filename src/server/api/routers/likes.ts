@@ -20,11 +20,10 @@ export const likesRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-
       const { success } = await ratelimit.limit(input.clerkId);
 
       if (!success) {
-        throw new TRPCError({ code: "TOO_MANY_REQUESTS"});
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       }
 
       const existingLike = await ctx.prisma.like.findFirst({

@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useState } from 'react';
-import { NAVBAR_HEIGHT } from '~/constants/styles';
+import { ReactNode, useEffect, useState } from "react";
+import { NAVBAR_HEIGHT } from "~/constants/styles";
 
 type BackgroundProps = {
-    children: ReactNode;
-  };
+  children: ReactNode;
+};
 
 const Background: React.FC<BackgroundProps> = ({ children }) => {
   const [bgDegree, setBgDegree] = useState(90);

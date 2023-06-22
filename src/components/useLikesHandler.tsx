@@ -2,12 +2,11 @@
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
-import { number } from "zod";
 
 type problemVotes = {
-    likes: number;
-    dislikes: number;
-    userLike: string;
+  likes: number;
+  dislikes: number;
+  userLike: string;
 };
 
 export const useLikesHandler = (data: any) => {
@@ -15,7 +14,6 @@ export const useLikesHandler = (data: any) => {
   const mutation = api.likes.handleLikes.useMutation();
   const [likesTrigger, setLikesTrigger] = useState(false);
 
-  
   const handleLikes = async (likeValue: number) => {
     if (user && user.user && user.user.id && data && data.id) {
       try {
@@ -69,7 +67,14 @@ export const useLikesHandler = (data: any) => {
     likes: likes,
     dislikes: dislikes,
     userLike: userLike,
-};
+  };
 
-  return { likesTrigger, setLikesTrigger, handleLikes, votes, updateLikes, totalLikeQuery };
+  return {
+    likesTrigger,
+    setLikesTrigger,
+    handleLikes,
+    votes,
+    updateLikes,
+    totalLikeQuery,
+  };
 };

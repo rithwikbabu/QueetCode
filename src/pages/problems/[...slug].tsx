@@ -70,9 +70,9 @@ export default function Page() {
 
   if (isLoading || totalLikeQuery.isLoading) return <div>Loading...</div>;
 
-  const markdown = data?.content?.replace(/\\n/g, "\n").replace(/\\`/g, "\`");
+  const markdown = data?.content?.replace(/\\n/g, "\n").replace(/\\`/g, "`");
 
-  console.log(markdown)
+  console.log(markdown);
 
   return (
     <Background>
