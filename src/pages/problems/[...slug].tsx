@@ -1,7 +1,5 @@
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { userAgent } from "next/server";
 import { useState, useEffect, useCallback } from "react";
 import Background from "~/components/Background";
 import Markdown from "~/components/Markdown";

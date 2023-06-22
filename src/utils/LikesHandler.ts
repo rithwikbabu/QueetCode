@@ -17,8 +17,8 @@ function LikesHandler(problemId: number | undefined) {
   const handleLikesMutation = api.likes.handleLikes.useMutation({
     onSuccess: () => {
       // Invalidate the queries after a successful mutation
-      likesByUserQuery.refetch();
-      totalLikesAndDislikesQuery.refetch();
+      void likesByUserQuery.refetch();
+      void totalLikesAndDislikesQuery.refetch();
     },
   });
 
