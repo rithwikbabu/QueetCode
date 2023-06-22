@@ -66,9 +66,13 @@ export default function Page() {
 
   useEffect(() => {
     (async () => {
-      await updateLikes();
+      try {
+        await updateLikes();
+      } catch (err) {
+        console.error(err);
+      }
     })();
-  }, [likesTrigger, totalLikeQuery]);
+  }, [likesTrigger, totalLikeQuery, updateLikes]);
 
   if (isLoading || totalLikeQuery.isLoading) return <div>Loading...</div>;
 
@@ -181,7 +185,9 @@ export default function Page() {
                       <div className="flex items-center space-x-4">
                         <div
                           className=" flex cursor-pointer items-center space-x-1 rounded px-1 py-[3px] text-neutral-400 hover:bg-neutral-700"
-                          onClick={() => handleLikes(1)}
+                          onClick={() => {
+                            handleLikes(1).catch((err) => console.error(err));
+                          }}
                         >
                           <div
                             className={`text-lg ${
@@ -208,7 +214,9 @@ export default function Page() {
                         </div>
                         <div
                           className=" flex cursor-pointer items-center space-x-1 rounded px-1 py-[3px] text-neutral-400 hover:bg-neutral-700"
-                          onClick={() => handleLikes(-1)}
+                          onClick={() => {
+                            handleLikes(-1).catch((err) => console.error(err));
+                          }}
                         >
                           <div
                             className={`text-lg ${

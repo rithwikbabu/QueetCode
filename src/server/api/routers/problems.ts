@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-const GetProblemByUrlInput = z.object({
-  url: z.string(),
-});
+// const GetProblemByUrlInput = z.object({
+//   url: z.string(),
+// });
 
 export const problemsRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {

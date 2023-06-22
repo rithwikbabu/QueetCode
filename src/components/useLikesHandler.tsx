@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
-import { Problem } from "@prisma/client";
+import type { Problem } from "@prisma/client";
 
 type problemVotes = {
   likes: number;
