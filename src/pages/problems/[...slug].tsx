@@ -1,9 +1,11 @@
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { userAgent } from "next/server";
 import { useState, useEffect, useCallback } from "react";
 import Background from "~/components/Background";
 import Markdown from "~/components/Markdown";
-import { useLikesHandler } from "~/components/useLikesHandler";
+import LikesHandler from "~/utils/LikesHandler";
 import { api } from "~/utils/api";
 
 export default function Page() {
@@ -61,20 +63,10 @@ export default function Page() {
     };
   }, [dragging, handleMouseMove, handleMouseUp]); // Now includes handleMouseMove and handleMouseUp in dependencies
 
-  const { likesTrigger, handleLikes, updateLikes, votes, totalLikeQuery } =
-    useLikesHandler(data);
+  const { likesByUser, totalLikesAndDislikes, handleLike, handleDislike } =
+    LikesHandler(data?.id);
 
-  useEffect(() => {
-    void (async () => {
-      try {
-        await updateLikes();
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, [likesTrigger, totalLikeQuery, updateLikes]);
-
-  if (isLoading || totalLikeQuery.isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading Data...</div>;
 
   const markdown = data?.content?.replace(/\\n/g, "\n").replace(/\\`/g, "`");
 
@@ -185,13 +177,11 @@ export default function Page() {
                       <div className="flex items-center space-x-4">
                         <div
                           className=" flex cursor-pointer items-center space-x-1 rounded px-1 py-[3px] text-neutral-400 hover:bg-neutral-700"
-                          onClick={() => {
-                            handleLikes(1).catch((err) => console.error(err));
-                          }}
+                          onClick={handleLike}
                         >
                           <div
                             className={`text-lg ${
-                              votes.userLike === "like"
+                              likesByUser?.data?.value === 1
                                 ? "text-easy"
                                 : "text-neutral-400"
                             }`}
@@ -210,17 +200,17 @@ export default function Page() {
                               ></path>
                             </svg>
                           </div>
-                          <div className="text-xs">{votes.likes}</div>
+                          <div className="text-xs">
+                            {totalLikesAndDislikes?.data?.likes}
+                          </div>
                         </div>
                         <div
                           className=" flex cursor-pointer items-center space-x-1 rounded px-1 py-[3px] text-neutral-400 hover:bg-neutral-700"
-                          onClick={() => {
-                            handleLikes(-1).catch((err) => console.error(err));
-                          }}
+                          onClick={handleDislike}
                         >
                           <div
                             className={`text-lg ${
-                              votes.userLike === "dislike"
+                              likesByUser?.data?.value === -1
                                 ? "text-hard"
                                 : "text-neutral-400"
                             }`}
@@ -239,7 +229,9 @@ export default function Page() {
                               ></path>
                             </svg>
                           </div>
-                          <div className="text-xs">{votes.dislikes}</div>
+                          <div className="text-xs">
+                            {totalLikesAndDislikes?.data?.dislikes}
+                          </div>
                         </div>
                       </div>
 

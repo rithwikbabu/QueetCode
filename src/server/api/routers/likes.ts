@@ -38,8 +38,8 @@ export const likesRouter = createTRPCRouter({
           where: { id: existingLike.id },
           data: { value: input.value },
         });
-      } else {
-        // if no like/dislike exists, create a new one
+      } else if (input.value !== 0) {
+        // if no like/dislike exists and input value is not 0, create a new one
         await ctx.prisma.like.create({
           data: {
             clerkId: input.clerkId,
