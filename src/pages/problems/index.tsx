@@ -86,7 +86,7 @@ const Home: NextPage = () => {
                               <div className="truncate">
                                 <Link
                                   href="problems/[url]"
-                                  as={`/problems/${problem.url}`}
+                                  as={`/problems/${problem.url || ""}`}
                                   className="h-5 hover:text-blue-500"
                                 >
                                   {problem.id}. {problem.title}
