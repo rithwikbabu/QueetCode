@@ -1,4 +1,6 @@
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { ReactNode } from 'react';
+
 import { NAVBAR_HEIGHT } from "~/constants/styles";
 
 type BackgroundProps = {

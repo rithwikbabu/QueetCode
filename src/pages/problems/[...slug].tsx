@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Background from "~/components/Background";
 import Markdown from "~/components/Markdown";
 import { useLikesHandler } from "~/components/useLikesHandler";
@@ -32,17 +32,19 @@ export default function Page() {
     setDragging(true);
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setDragging(false);
-  };
+  }, []); // No dependencies for handleMouseUp
 
-  const handleMouseMove = (event: MouseEvent) => {
-    // Changed type here
-    if (dragging) {
-      const percentageOfScreen = (event.clientX / window.innerWidth) * 100;
-      setPosition(percentageOfScreen);
-    }
-  };
+  const handleMouseMove = useCallback(
+    (event: MouseEvent) => {
+      if (dragging) {
+        const percentageOfScreen = (event.clientX / window.innerWidth) * 100;
+        setPosition(percentageOfScreen);
+      }
+    },
+    [dragging]
+  ); // handleMouseMove depends on dragging
 
   // Add event listeners for mouse move and mouse up to the window
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function Page() {
         window.removeEventListener("mouseup", handleMouseUp);
       }
     };
-  }, [dragging]);
+  }, [dragging, handleMouseMove, handleMouseUp]); // Now includes handleMouseMove and handleMouseUp in dependencies
 
   const { likesTrigger, handleLikes, updateLikes, votes, totalLikeQuery } =
     useLikesHandler(data);
@@ -71,8 +73,6 @@ export default function Page() {
   if (isLoading || totalLikeQuery.isLoading) return <div>Loading...</div>;
 
   const markdown = data?.content?.replace(/\\n/g, "\n").replace(/\\`/g, "`");
-
-  console.log(markdown);
 
   return (
     <Background>

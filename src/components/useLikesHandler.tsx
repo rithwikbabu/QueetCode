@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
+import { Problem } from "@prisma/client";
 
 type problemVotes = {
   likes: number;
@@ -9,7 +10,7 @@ type problemVotes = {
   userLike: string;
 };
 
-export const useLikesHandler = (data: any) => {
+export const useLikesHandler = (data: Problem | null | undefined) => {
   const user = useUser();
   const mutation = api.likes.handleLikes.useMutation();
   const [likesTrigger, setLikesTrigger] = useState(false);
@@ -63,7 +64,7 @@ export const useLikesHandler = (data: any) => {
     }
   };
 
-  let votes: problemVotes = {
+  const votes: problemVotes = {
     likes: likes,
     dislikes: dislikes,
     userLike: userLike,
