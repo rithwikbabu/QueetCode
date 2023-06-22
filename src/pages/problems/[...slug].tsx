@@ -65,7 +65,7 @@ export default function Page() {
     useLikesHandler(data);
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       try {
         await updateLikes();
       } catch (err) {
