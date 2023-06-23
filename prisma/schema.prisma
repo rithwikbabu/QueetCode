@@ -13,24 +13,61 @@ datasource db {
 }
 
 model Solution {
-  id        Int     @id @default(autoincrement())
-  content   String
-  userId    String
-  problemId Int
-  problem   Problem @relation(fields: [problemId], references: [id])
+  id          Int          @id @default(autoincrement())
+  code        String // Now it's String
+  userId      String
+  problemId   Int
+  problem     Problem      @relation(fields: [problemId], references: [id])
+  submissions Submission[]
+  saveStates  SaveState[] // One-to-many relationship with SaveState
 
+  @@unique([userId, problemId]) // Each user can only have one solution for each problem
   @@index([problemId], name: "problemIdIndex")
 }
 
+model SaveState {
+  id         Int      @id @default(autoincrement())
+  language   String
+  code       String
+  solutionId Int
+  solution   Solution @relation(fields: [solutionId], references: [id])
+
+  @@unique([solutionId, language]) // One language per solution
+}
+
+model Submission {
+  id         Int      @id @default(autoincrement())
+  status     String // Could be 'Accepted', 'Wrong Answer', etc.
+  runtime    Int?     @default(0) // Default value is 0
+  memory     Int?     @default(0) // Default value is 0
+  timestamp  DateTime @default(now())
+  language   String
+  solutionId Int
+  solution   Solution @relation(fields: [solutionId], references: [id])
+
+  @@index([solutionId], name: "solutionIdIndex")
+}
+
 model Problem {
-  id         Int            @id @default(autoincrement())
-  title      String
-  url        String?
-  content    String?        @db.Text
-  difficulty String
-  tags       TagOnProblem[]
-  solutions  Solution[]
-  likes      Like[]
+  id           Int           @id @default(autoincrement())
+  title        String
+  url          String?
+  content      String?       @db.Text
+  difficulty   String
+  tags         TagOnProblem[]
+  solutions    Solution[]
+  likes        Like[]
+  starterCodes StarterCode[] // One-to-many relationship with StarterCode
+}
+
+model StarterCode {
+  id        Int      @id @default(autoincrement())
+  language  String
+  code      String
+  problemId Int
+  problem   Problem @relation(fields: [problemId], references: [id])
+
+  @@unique([problemId, language]) // One language per problem
 }
 
 model Tag {

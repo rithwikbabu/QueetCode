@@ -1,65 +1,35 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import Background from "~/components/Background";
+import CodeEditor from "~/components/CodeEditor";
 import Markdown from "~/components/Markdown";
+import { LANGUAGES } from "~/constants/editor";
+import type { LanguageOptions } from "~/constants/editor";
 import LikesHandler from "~/utils/LikesHandler";
 import { api } from "~/utils/api";
+import { useResize } from "~/utils/useResize";
 
 export default function Page() {
   const router = useRouter();
 
-  // Get URL parts. Assume it's an array, or default to an array with an empty string.
   const slug = Array.isArray(router.query.slug) ? router.query.slug : [""];
 
-  // Ensure url[0] is a string before passing it to the API call
   const problemUrl = typeof slug[0] === "string" ? slug[0] : "";
 
   const { data, isLoading } = api.problems.getProblemByUrl.useQuery({
     url: problemUrl,
   });
-  const tabs = ["description", "submissions"];
+  const tabs = ["description", "discussion", "submissions"];
 
-  // if url has only one element or is undefined, default tab to 'description'
   const currentTab = slug && slug.length > 1 ? slug[1] : "description";
-  // Function to check if the current route is active
   const isActive = (t: string | undefined) => t === currentTab;
 
-  const [position, setPosition] = useState<number>(35);
-  const [dragging, setDragging] = useState<boolean>(false);
+  // editor shit
+  const [ language, setLanguage ] = useState<LanguageOptions>(LANGUAGES.PYTHON);
 
-  const handleMouseDown = () => {
-    setDragging(true);
-  };
-
-  const handleMouseUp = useCallback(() => {
-    setDragging(false);
-  }, []); // No dependencies for handleMouseUp
-
-  const handleMouseMove = useCallback(
-    (event: MouseEvent) => {
-      if (dragging) {
-        const percentageOfScreen = (event.clientX / window.innerWidth) * 100;
-        setPosition(percentageOfScreen);
-      }
-    },
-    [dragging]
-  ); // handleMouseMove depends on dragging
-
-  // Add event listeners for mouse move and mouse up to the window
-  useEffect(() => {
-    if (dragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    }
-
-    return () => {
-      if (dragging) {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      }
-    };
-  }, [dragging, handleMouseMove, handleMouseUp]); // Now includes handleMouseMove and handleMouseUp in dependencies
+  const { positionX, positionY, handleMouseDownX, handleMouseDownY } =
+    useResize();
 
   const { likesByUser, totalLikesAndDislikes, handleLike, handleDislike } =
     LikesHandler(data?.id);
@@ -78,10 +48,10 @@ export default function Page() {
           <div
             id="left-container"
             className="h-full"
-            style={{ width: `calc(${position}% - 4px)` }}
+            style={{ width: `calc(${positionX}% - 4px)` }}
           >
             <div className="flex h-full flex-col">
-              <div className="flex h-9 w-full items-center justify-between rounded-t border-b border-neutral-700 bg-neutral-900 px-4">
+              <div className="border-b-md flex h-9 w-full items-center justify-between rounded-t-md border-neutral-700 bg-neutral-900 px-4">
                 <div className="flex h-full flex-row gap-8">
                   {tabs.map((t, index) => (
                     <div
@@ -106,7 +76,7 @@ export default function Page() {
                   ))}
                 </div>
               </div>
-              <div className="flex h-full w-full flex-col overflow-y-auto rounded-b bg-neutral-800">
+              <div className="flex h-full w-full flex-col overflow-y-auto rounded-b-md bg-neutral-800">
                 <div id="header" className="w-full px-5 pt-5">
                   <div className="w-full">
                     <div className="flex space-x-4">
@@ -302,7 +272,7 @@ export default function Page() {
           </div>
           <div
             className="flex h-full w-2 items-center justify-center transition hover:cursor-col-resize hover:bg-neutral-100 hover:opacity-20"
-            onMouseDown={handleMouseDown}
+            onMouseDown={handleMouseDownX}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -329,11 +299,62 @@ export default function Page() {
           <div
             id="right-container"
             className="h-full"
-            style={{ width: `calc(${100 - position}% - 4px)` }}
+            style={{ width: `calc(${100 - positionX}% - 4px)` }}
           >
             <div className="flex h-full flex-col">
-              <div className="flex h-9 w-full items-center justify-between rounded-t border-b border-neutral-700 bg-neutral-900 px-4"></div>
-              <div className="flex h-full w-full overflow-y-auto rounded-b bg-neutral-800"></div>
+              <div className="border-b-md flex h-9 w-full items-center justify-between rounded-t-md border-neutral-700 bg-neutral-900 px-4">
+                <div className="group flex cursor-pointer items-center whitespace-nowrap rounded bg-transparent px-2 py-1.5 pr-1 text-left text-xs font-medium text-neutral-400 hover:bg-transparent hover:text-neutral-200 focus:outline-none active:bg-transparent">
+                  <div>{language.name}</div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                    height="1em"
+                    fill="currentColor"
+                    className="pointer-events-none ml-2 h-3 w-3"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4.929 7.913l7.078 7.057 7.064-7.057a1 1 0 111.414 1.414l-7.77 7.764a1 1 0 01-1.415 0L3.515 9.328a1 1 0 011.414-1.414z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+              <div
+                className="flex w-full overflow-y-auto rounded-b-md bg-neutral-800"
+                style={{ height: `calc(${positionY}%)` }}
+              >
+                <CodeEditor
+                  code={""}
+                  language={language.mode}
+                  onChange={function (newValue: string, e: any): void {
+                    throw new Error("Function not implemented.");
+                  }}
+                />
+              </div>
+              <div
+                className="flex h-2 w-full items-center justify-center transition hover:cursor-row-resize hover:bg-neutral-100 hover:opacity-20"
+                onMouseDown={handleMouseDownY}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 14 2"
+                  width="14"
+                  height="2"
+                  fill="currentColor"
+                  className="text-neutral-800 transition"
+                >
+                  <circle r="1" transform="matrix(-1 0 0 1 1 1)"></circle>
+                  <circle r="1" transform="matrix(-1 0 0 1 7 1)"></circle>
+                  <circle r="1" transform="matrix(-1 0 0 1 13 1)"></circle>
+                </svg>
+              </div>
+              <div
+                className="w-full rounded-md bg-neutral-800"
+                style={{ height: `calc(${100 - positionY}%)` }}
+              ></div>
             </div>
           </div>
         </div>
