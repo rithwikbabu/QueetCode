@@ -2,19 +2,19 @@ import React from "react";
 import { Editor } from "@monaco-editor/react";
 
 type CodeEditorProps = {
-  code: string;
   language: string;
+  code: string;
   onChange: (newValue: string, e: any) => void;
 };
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ language }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ language, code }) => {
   return (
     <div className="h-full w-full">
       <Editor
         theme="vs-dark"
         defaultLanguage={language}
         defaultValue={
-          "class Solution:\n\tdef maxProfit(self, k: int, prices: List[int]) -> int:"
+          code ? code : "Error loading code, please refresh the page!"
         }
         options={{
           scrollBeyondLastLine: false,

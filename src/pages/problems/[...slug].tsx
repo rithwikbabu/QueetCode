@@ -8,6 +8,7 @@ import { LANGUAGES } from "~/constants/editor";
 import type { LanguageOptions } from "~/constants/editor";
 import LikesHandler from "~/utils/LikesHandler";
 import { api } from "~/utils/api";
+import { unescapeString } from "~/utils/stringUtils";
 import { useResize } from "~/utils/useResize";
 
 export default function Page() {
@@ -20,13 +21,19 @@ export default function Page() {
   const { data, isLoading } = api.problems.getProblemByUrl.useQuery({
     url: problemUrl,
   });
+
   const tabs = ["description", "discussion", "submissions"];
 
   const currentTab = slug && slug.length > 1 ? slug[1] : "description";
   const isActive = (t: string | undefined) => t === currentTab;
 
   // editor shit
-  const [ language, setLanguage ] = useState<LanguageOptions>(LANGUAGES.PYTHON);
+  const [language, setLanguage] = useState<LanguageOptions>(LANGUAGES.PYTHON);
+
+  const code = api.problems.getStarterCode.useQuery({
+    url: problemUrl,
+    language: language.mode,
+  });
 
   const { positionX, positionY, handleMouseDownX, handleMouseDownY } =
     useResize();
@@ -34,11 +41,12 @@ export default function Page() {
   const { likesByUser, totalLikesAndDislikes, handleLike, handleDislike } =
     LikesHandler(data?.id);
 
-  if (isLoading) return <div>Loading Data...</div>;
+  const markdown = unescapeString(data?.content);
+  const codeText = unescapeString(code.data);
 
-  const markdown = data?.content?.replace(/\\n/g, "\n").replace(/\\`/g, "`");
-
-  return (
+  return isLoading || !data ? (
+    <div>Loading...</div> // Replace this with your preferred loading component
+  ) : (
     <Background>
       <div
         id="content-wrapper"
@@ -327,7 +335,7 @@ export default function Page() {
                 style={{ height: `calc(${positionY}%)` }}
               >
                 <CodeEditor
-                  code={""}
+                  code={codeText}
                   language={language.mode}
                   onChange={function (newValue: string, e: any): void {
                     throw new Error("Function not implemented.");
