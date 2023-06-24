@@ -4,7 +4,6 @@ import { Editor } from "@monaco-editor/react";
 type CodeEditorProps = {
   language: string;
   code: string;
-  onChange: (newValue: string, e: any) => void;
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ language, code }) => {

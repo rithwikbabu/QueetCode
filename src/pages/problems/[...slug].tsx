@@ -41,8 +41,8 @@ export default function Page() {
   const { likesByUser, totalLikesAndDislikes, handleLike, handleDislike } =
     LikesHandler(data?.id);
 
-  const markdown = unescapeString(data?.content);
-  const codeText = unescapeString(code.data);
+  const markdown = unescapeString(data?.content || "");
+  const codeText = unescapeString(code.data || "");
 
   return isLoading || !data ? (
     <div>Loading...</div> // Replace this with your preferred loading component
@@ -334,13 +334,7 @@ export default function Page() {
                 className="flex w-full overflow-y-auto rounded-b-md bg-neutral-800"
                 style={{ height: `calc(${positionY}%)` }}
               >
-                <CodeEditor
-                  code={codeText}
-                  language={language.mode}
-                  onChange={function (newValue: string, e: any): void {
-                    throw new Error("Function not implemented.");
-                  }}
-                />
+                <CodeEditor code={codeText || ""} language={language.mode} />
               </div>
               <div
                 className="flex h-2 w-full items-center justify-center transition hover:cursor-row-resize hover:bg-neutral-100 hover:opacity-20"

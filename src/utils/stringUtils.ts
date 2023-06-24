@@ -1,4 +1,4 @@
-export function unescapeString(escapedString: any) {
+export function unescapeString(escapedString: string): string {
   // Use JSON.parse to handle most escape sequences.
   // We wrap the string in quotes to make it valid JSON.
   let unescapedString = JSON.parse(`"${escapedString}"`);
