@@ -2,7 +2,7 @@ export function unescapeString(escapedString: string): string | null {
     // Wrap the string in quotes to make it valid JSON.
     try {
       // Try to parse the string as JSON to handle most escape sequences.
-      let unescapedString: string = JSON.parse(`"${escapedString}"`);
+      let unescapedString: string = JSON.parse(`"${escapedString}"`) as string;
   
       // JSON.parse does not handle \xHH sequences, so we handle them manually.
       unescapedString = unescapedString.replace(
