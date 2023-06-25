@@ -23,8 +23,9 @@ const SaveButton: React.FC<SaveButtonProps> = ({
 
   const codeText = cleanEditorText.substring(1, cleanEditorText.length - 1);
 
-  const saveEditor = async (): Promise<void> => {
-    await handleSaveMutation.mutate({
+  // if mutate() is not a Promise, you don't need to use await.
+  const saveEditor = (): void => {
+    handleSaveMutation.mutate({
       language: language,
       problemId: problemId,
       codeText: codeText,
@@ -32,10 +33,10 @@ const SaveButton: React.FC<SaveButtonProps> = ({
     });
   };
 
-  const handleClick = async () => {
+  const handleClick = () => {
     setIsLoading(true);
     try {
-      await saveEditor();
+      saveEditor();
     } catch (err) {
       console.error(err);
     }
