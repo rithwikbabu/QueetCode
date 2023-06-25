@@ -29,7 +29,7 @@ const SaveButton: React.FC<SaveButtonProps> = ({
         language: language,
         problemId: problemId,
         codeText: codeText,
-        clerkId: user.id,
+        clerkId: user?.id,
       });
       resolve();
     });
