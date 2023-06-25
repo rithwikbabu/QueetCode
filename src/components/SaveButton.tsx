@@ -23,15 +23,12 @@ const SaveButton: React.FC<SaveButtonProps> = ({
 
   const codeText = cleanEditorText.substring(1, cleanEditorText.length - 1);
 
-  const saveEditor = (): Promise<void> => {
-    return new Promise((resolve) => {
-      handleSaveMutation.mutate({
-        language: language,
-        problemId: problemId,
-        codeText: codeText,
-        clerkId: user?.id || "",
-      });
-      resolve();
+  const saveEditor = async (): Promise<void> => {
+    await handleSaveMutation.mutate({
+      language: language,
+      problemId: problemId,
+      codeText: codeText,
+      clerkId: user?.id || "",
     });
   };
 

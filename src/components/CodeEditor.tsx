@@ -1,5 +1,6 @@
 import React from "react";
-import { Editor, OnMount } from "@monaco-editor/react";
+import { Editor } from "@monaco-editor/react";
+import type { OnMount } from "@monaco-editor/react";
 
 type CodeEditorProps = {
   language: string;

@@ -29,7 +29,7 @@ export default function Page() {
   const markdown = unescapeString(data?.content || "");
 
   // editor shit
-  const [language, setLanguage] = useState<LanguageOptions>(LANGUAGES.PYTHON);
+  const [language] = useState<LanguageOptions>(LANGUAGES.PYTHON);
 
   const { positionX, positionY, handleMouseDownX, handleMouseDownY } =
     useResize();
