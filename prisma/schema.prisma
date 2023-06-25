@@ -19,7 +19,6 @@ model Solution {
   problemId   Int
   problem     Problem      @relation(fields: [problemId], references: [id])
   submissions Submission[]
-  saveStates  SaveState[] // One-to-many relationship with SaveState
 
   @@unique([userId, problemId]) // Each user can only have one solution for each problem
   @@index([problemId], name: "problemIdIndex")
@@ -29,10 +28,11 @@ model SaveState {
   id         Int      @id @default(autoincrement())
   language   String
   code       String
-  solutionId Int
-  solution   Solution @relation(fields: [solutionId], references: [id])
+  clerkId    String
+  problemId  Int
 
-  @@unique([solutionId, language]) // One language per solution
+  @@index([clerkId], name: "clerkIdIndex")
+  @@index([problemId, language], name: "problemIdIndex")  // One language per solution
 }
 
 model Submission {
@@ -49,10 +49,10 @@ model Submission {
 }
 
 model Problem {
-  id           Int           @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   title        String
   url          String?
-  content      String?       @db.Text
+  content      String?        @db.Text
   difficulty   String
   tags         TagOnProblem[]
   solutions    Solution[]
@@ -61,7 +61,7 @@ model Problem {
 }
 
 model StarterCode {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   language  String
   code      String
   problemId Int

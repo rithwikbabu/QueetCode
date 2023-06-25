@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Background from "~/components/Background";
 import CodeEditor from "~/components/CodeEditor";
 import Markdown from "~/components/Markdown";
+import SaveButton from "~/components/SaveButton";
 import { LANGUAGES } from "~/constants/editor";
 import type { LanguageOptions } from "~/constants/editor";
 import LikesHandler from "~/utils/LikesHandler";
 import { api } from "~/utils/api";
+import SaveStatesHandler from "~/utils/saveStatesHandler";
 import { unescapeString } from "~/utils/stringUtils";
 import { useResize } from "~/utils/useResize";
 
@@ -15,7 +17,6 @@ export default function Page() {
   const router = useRouter();
 
   const slug = Array.isArray(router.query.slug) ? router.query.slug : [""];
-
   const problemUrl = typeof slug[0] === "string" ? slug[0] : "";
 
   const { data, isLoading } = api.problems.getProblemByUrl.useQuery({
@@ -23,17 +24,12 @@ export default function Page() {
   });
 
   const tabs = ["description", "discussion", "submissions"];
-
   const currentTab = slug && slug.length > 1 ? slug[1] : "description";
   const isActive = (t: string | undefined) => t === currentTab;
+  const markdown = unescapeString(data?.content || "");
 
   // editor shit
   const [language, setLanguage] = useState<LanguageOptions>(LANGUAGES.PYTHON);
-
-  const code = api.problems.getStarterCode.useQuery({
-    url: problemUrl,
-    language: language.mode,
-  });
 
   const { positionX, positionY, handleMouseDownX, handleMouseDownY } =
     useResize();
@@ -41,10 +37,34 @@ export default function Page() {
   const { likesByUser, totalLikesAndDislikes, handleLike, handleDislike } =
     LikesHandler(data?.id);
 
-  const markdown = unescapeString(data?.content || "");
-  const codeText = unescapeString(code.data || "");
+  const [editorContent, setEditorContent] = useState<string | undefined>("");
 
-  return isLoading || !data ? (
+  const codeQuery = api.problems.getStarterCode.useQuery({
+    url: problemUrl,
+    language: language.mode,
+  });
+
+  const { saveState } = SaveStatesHandler(data?.id, language.mode);
+
+  useEffect(() => {
+    if (!codeQuery.isLoading && !(saveState && saveState.isLoading)) {
+      if (saveState?.data?.code) {
+        setEditorContent(unescapeString(saveState.data.code || "") || "");
+      } else if (codeQuery.data) {
+        setEditorContent(unescapeString(codeQuery.data || "") || "");
+      }
+    }
+  }, [
+    codeQuery.data,
+    codeQuery.isLoading,
+    saveState?.data,
+    saveState?.isLoading,
+  ]);
+
+  return isLoading ||
+    !data ||
+    codeQuery.isLoading ||
+    (saveState && saveState.isLoading) ? (
     <div>Loading...</div> // Replace this with your preferred loading component
   ) : (
     <Background>
@@ -329,12 +349,23 @@ export default function Page() {
                     ></path>
                   </svg>
                 </div>
+                <div className="">
+                  <SaveButton
+                    editorContent={editorContent || ""}
+                    language={language.mode}
+                    problemId={data.id}
+                  />
+                </div>
               </div>
               <div
                 className="flex w-full overflow-y-auto rounded-b-md bg-neutral-800"
                 style={{ height: `calc(${positionY}%)` }}
               >
-                <CodeEditor code={codeText || ""} language={language.mode} />
+                <CodeEditor
+                  code={editorContent || ""}
+                  language={language.mode}
+                  handleEditorChange={setEditorContent}
+                />
               </div>
               <div
                 className="flex h-2 w-full items-center justify-center transition hover:cursor-row-resize hover:bg-neutral-100 hover:opacity-20"

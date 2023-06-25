@@ -40,16 +40,15 @@ export const useResize = () => {
     (event: MouseEvent) => {
       if (draggingY) {
         let percentageOfScreen = (event.clientY / window.innerHeight) * 100;
-  
+
         // We want percentageOfScreen to be between 70 and 95
         percentageOfScreen = Math.max(70, Math.min(percentageOfScreen, 95));
-  
+
         setPositionY(percentageOfScreen);
       }
     },
     [draggingY]
   );
-  
 
   useEffect(() => {
     if (draggingX) {
